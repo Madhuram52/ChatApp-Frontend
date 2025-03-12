@@ -13,15 +13,19 @@ interface AuthContextType {
 // Provide a default value to avoid TypeScript errors
 const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Use `false` initially
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchAuthStatus = async () => {
             const result = await checkAuth();
             setIsAuthenticated(result);
+            setLoading(false);
         }
         fetchAuthStatus();
     }, []);
+
+    if (loading) return null;
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
